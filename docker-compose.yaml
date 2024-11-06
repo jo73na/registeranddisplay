@@ -1,0 +1,33 @@
+version: '3.8'  # Use a valid version
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: my-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: jonajona
+      MYSQL_DATABASE: generaldb
+    ports:
+      - "3306:3306"
+    networks:
+      - my-network
+
+  app:
+    build:
+      context: .  # Ensure this points to the directory containing the Dockerfile
+      dockerfile: Dockerfile
+    container_name: registeranddisplay
+    ports:
+      - "8089:8089"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://my-mysql:3306/generaldb?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: jonajona
+    depends_on:
+      - db
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
